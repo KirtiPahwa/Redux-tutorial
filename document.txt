@@ -1,0 +1,115 @@
+--why redux needed?
+(Suppose , we need to send a prop in from component 5b to component 9a. So we will send this prop from 5b to app.js then from app.js to 9a by child prop. So to reduce this hustle , we used context api. But we are also having a redux library , which helps to manage states. This is a external library for state management. We make a redux store where we keep all the states of application. And whenever needed, we use it.)
+1. When a javascrip alppiction grow big, it become difficult fo the user to manage its stae.
+2. Redux solves this problem by managing appplication's state with a single global object called Store.
+3. Makes testing very easy.
+4. Consistency throughout the application.
+
+--Actions and Reducers:-
+1. An action is a plain object that describes the intention to cause change. 
+2. A reducer is a function that determines changes to an application's state. Return the new state and tell the store how to do.
+3. It uses the acion it receives to determine this change.
+
+(view dispatac a action to reducer. And reducer change the state into store. And store will reflect changes on the view side(user side).)
+
+(Eg., Child says , he need bat ball(view).
+ So his parents agrees and create a action i.e., send mssg on whatsapp of TYPE- BRING and PAYLOAD-1 ball+1 bat.(Actions creator) (TYPE,PAYLOAD-Action)). (Action creators dispatched the action(Type+Payload.))
+ Shankar doe (Reducer) will bring the bat ball after seeing the size ,color and quality of bag and will return  the bat ball to the child. (Reduces changes the state in actual.)
+
+
+
+ Starting Building application:
+ 1. We made navbar and shop component and add buttons.
+ 2. Then install redux , react-redux and redux-thunk (middleware) using npm i redux react-redux redux-thunk.
+ 3. I made navbar and shop.js and i am making folder-state in src and inside state-- make 2 folders- action creator and reducers. 
+ 4. Inside action creators, make index.js file. In this file, we make 2 action creators- depositmoney and withdrwamoney (mom and dad) which will send action. (And this action will be sent to the reducer(shankar doe) and reducer will change the state.(shankar will send bat)).
+ 5. Next we create amountReducer inside reducers, which is a reducer that will change the state. In this we are passing current state and action. So based on the action, it will change the state i.e., it will depositmoney or withdrwamoney  in acctual state based on passed action. (See action was just a information passing to reducer. Reducer is actuallly performing that action by changing in the state.).
+ 6. Now, if we are having more than one reducer, so we want to export all the reducers in combined form . And this we are doing in index.js of reducers folder.SO import combinereducer from redux.This function combines all reducers in one reducer and export it.
+ 7.Now, i am gonna make a store(redux store) in main folder state and make a index.js to access state . So basically index.js is the entry point and will return acction creator.
+ 8.So in index (of state folder) , export * as action cretors from action-cretors/index.js
+ 9. So now we are making store in store.js.In this,we are making store using legacy_createStore which will take 3 paramters- reducers,intial state ,middleware(using thunk).
+ 10.Now to give the access of this redux store to overall application.So in main src folder, in index.js file, wrap app component in provider imported from react-redux and pass store to the provider.
+
+
+ (Make sure to export default reducers(separately) in index.js file of reducers.
+ We cannot do like export default reducers=combinereducer({})......we have to write it as const reducers=combinereducer({}) and then export default reducers.
+ Because this is default export not named.)
+ (Difference between name export and default export:
+ 
+ Default export:
+ Default exports are created by including a default tag in the export.modules can only have one default export.
+
+
+ 
+ 
+ const MyComponent = () => {}
+
+export default MyComponent
+
+// or
+
+function MyComponent() {}
+
+export default MyComponent
+
+// or
+
+export default function() {}
+
+// or
+
+export default () => {}
+
+ 
+
+Named exports:
+named exports use the name of the function or class as their identifier.Named exports allow multiple exports in a single file.
+
+
+
+export const MyFunction = () => {
+  ...body
+}
+
+// or
+
+export function MyFunction() {
+  ...body
+}
+
+ Nothing to wrry use snippets . It was mistake in syntax just.
+ )
+
+
+
+ 11.Now, lets see how to access state.Lets try to access state of redux store using useSelector hook in navbar component. so write it as const state = useSelector((state) => state.state);
+ But we are having just amount reducer in combinereducers in index.js file. So you can just write state.amount to pull just amount. If we there are more then just amount, then we will pull all using above syntxa.
+ But now you can write :
+  const amount = useSelector((state) => state.amount);
+  And use amount variable to show amount in button of your balance in the same file itself.
+  12.Now to add amount we have made depositmoney in shop.js and addamount reducer in our amountReducers. So now to linke them,use useDisptach hook.We want that in our shop.js file , depositmoney dispatach the addamount reducer to add amount, so to do that import useDisptach in shop js . And immport bindactioncreators from redux and actionCreators from our store(that we made).
+  13.Here we can use bindactioncreators and without using it , we can also make same work:
+  Without bindactioncreators:
+  Just add dispatch(actionCreators.depositmoney(100)) inside the onclick event on button.
+  With bindactioncreators:
+  We dont have to write this above syntax , for each action creator. WE will use bindactioncreators which will take 2 paramters- actions creators and dispatch as:
+  const actions = bindActionCreators(actionCreators, dispatch);
+So now i will write just withdrwamoney inside the depositmoney button's on click function as:
+  onClick={()=>{actions.depositmoney}};
+
+Or use destructuring while using bindActionCreators itself as:
+  const { withdrawMoney, despositMoney } = bindActionCreators(
+and use in button as:
+        onClick={() => {
+          withdrawMoney(100);
+        }}
+
+  
+
+  Note:when ever there is arguments in function which is insider onclick event of button. We have to put this function insider the arrow function. 
+  Eg., onClick={() => {
+          dispatch(actionCreators.despositMoney(100));
+        }}
+If there is no argument then we can directly call as:
+onClick={dispatch()}
+  
